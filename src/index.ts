@@ -190,5 +190,7 @@ export function getPatternList(): string[] {
 }
 
 // Export the bot info functionality
-export { botInfo, botDatabase, BotInfo } from './botInfo';
-export { botCategory } from './botCategory';
+import botInfo = require('./botInfo');
+import botCategory = require('./botCategory');
+
+export { botInfo, botCategory };

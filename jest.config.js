@@ -1,8 +1,10 @@
 module.exports = {
-  preset: 'ts-jest',
-  testEnvironment: 'node',
-  testMatch: ['**/test/**/*.test.ts'],
-  collectCoverage: true,
-  coverageDirectory: 'coverage',
-  coverageReporters: ['text', 'lcov'],
+  testMatch: [
+    "**/__tests__/**/*.js?(x)",
+    "**/?(*.)+(spec|test).js?(x)",
+    "**/?(*.)+(spec|test).ts?(x)"
+  ],
+  transform: {
+    "^.+\\.(ts|tsx)$": "ts-jest"
+  }
 }; 

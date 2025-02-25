@@ -188,3 +188,7 @@ export function getPattern(options: BotDetectOptions = {}): RegExp {
 export function getPatternList(): string[] {
   return [...botPatterns];
 }
+
+// Export the bot info functionality
+export { botInfo, botDatabase, BotInfo } from './botInfo';
+export { botCategory } from './botCategory';

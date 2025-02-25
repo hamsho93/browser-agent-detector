@@ -1,0 +1,50 @@
+import { botDatabase, botPatterns } from './botDatabase';
+
+/**
+ * Checks if a user agent string belongs to a bot
+ * @param {string|null} userAgent - The user agent string to check
+ * @return {boolean} - True if the user agent is a bot, false otherwise
+ */
+export function botdetect(userAgent) {
+  if (!userAgent) return false;
+  
+  const lowerUA = userAgent.toLowerCase();
+  return botPatterns.some(pattern => lowerUA.includes(pattern));
+}
+
+/**
+ * Returns the first matching bot pattern or null
+ * @param {string|null} userAgent - The user agent string to check
+ * @return {string|null} - The matching pattern or null if no match
+ */
+export function botMatch(userAgent) {
+  if (!userAgent) return null;
+  
+  const lowerUA = userAgent.toLowerCase();
+  const matchedPattern = botPatterns.find(pattern => lowerUA.includes(pattern));
+  return matchedPattern || null;
+}
+
+/**
+ * Returns detailed information about the matching bot
+ * @param {string|null} userAgent - The user agent string to check
+ * @return {object|null} - Bot metadata or null if no match
+ */
+export function botInfo(userAgent) {
+  if (!userAgent) return null;
+  
+  const lowerUA = userAgent.toLowerCase();
+  
+  for (const bot of botDatabase) {
+    if (lowerUA.includes(bot.pattern.toLowerCase())) {
+      return {
+        ...bot,
+        isBot: true
+      };
+    }
+  }
+  
+  return null;
+}
+
+// Remove the problematic imports and exports

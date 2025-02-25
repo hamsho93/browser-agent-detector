@@ -9,6 +9,7 @@ A lightweight, efficient library for detecting bots, crawlers, and spiders by an
 ## Features
 
 - Detects bots, crawlers, and spiders based on user agent strings
+- Categorizes bots by type (AI, search, social, analytics, monitoring)
 - Lightweight with zero dependencies
 - Highly customizable with allow and deny lists
 - TypeScript support
@@ -54,6 +55,20 @@ const allMatches = botMatches('Mozilla/5.0 (compatible; Googlebot/2.1; +http://w
 console.log(allMatches); // ['googlebot', 'bot']
 ```
 
+### Bot Categorization
+```javascript
+import { botCategory } from 'browser-agent-detector';
+
+// Categorize bots by type
+console.log(botCategory('Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)')); // 'search'
+console.log(botCategory('Mozilla/5.0 (compatible; GPTBot/1.0; +https://openai.com/gptbot)')); // 'ai'
+console.log(botCategory('Mozilla/5.0 (compatible; Twitterbot/1.0)')); // 'social'
+console.log(botCategory('Mozilla/5.0 (compatible; AhrefsBot/7.0; +http://ahrefs.com/robot/)')); // 'analytics'
+console.log(botCategory('Mozilla/5.0 (compatible; UptimeRobot/2.0)')); // 'monitoring'
+console.log(botCategory('Some unknown bot')); // 'other'
+console.log(botCategory('Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/91.0.4472.124')); // null (not a bot)
+```
+
 ### Custom Detection
 ```javascript
 import { createBotDetect } from 'browser-agent-detector';
@@ -75,13 +90,13 @@ console.log(customDetect('Mozilla/5.0 evil-scraper/1.0')); // true
 ### Server-Side Rendering
 ```javascript
 // pages/index.js
-import { botdetect } from 'browser-agent-detector';
+import { botdetect, botCategory } from 'browser-agent-detector';
 
-export default function Home({ isBot }) {
+export default function Home({ isBot, botType }) {
   return (
     <div>
       {isBot ? (
-        <p>Bot-friendly content</p>
+        <p>Bot-friendly content (Type: {botType || 'unknown'})</p>
       ) : (
         <p>Human-friendly content</p>
       )}
@@ -92,10 +107,12 @@ export default function Home({ isBot }) {
 export async function getServerSideProps({ req }) {
   const userAgent = req.headers['user-agent'];
   const isBot = botdetect(userAgent);
+  const botType = botCategory(userAgent);
   
   return {
     props: {
-      isBot
+      isBot,
+      botType
     }
   };
 }
@@ -105,15 +122,19 @@ export async function getServerSideProps({ req }) {
 ```javascript
 // middleware.js
 import { NextResponse } from 'next/server';
-import { botdetect } from 'browser-agent-detector';
+import { botdetect, botCategory } from 'browser-agent-detector';
 
 export function middleware(request) {
   const userAgent = request.headers.get('user-agent');
   const isBot = botdetect(userAgent);
+  const botType = botCategory(userAgent);
   
-  // Add isBot to request headers
+  // Add bot info to request headers
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set('x-is-bot', isBot.toString());
+  if (botType) {
+    requestHeaders.set('x-bot-type', botType);
+  }
   
   return NextResponse.next({
     request: {
@@ -123,18 +144,39 @@ export function middleware(request) {
 }
 ```
 
+## AI Bot Detection
+
+The library includes specific detection for AI bots from major providers:
+
+```javascript
+import { botdetect, botCategory } from 'browser-agent-detector';
+
+// Detect AI bots
+console.log(botdetect('Mozilla/5.0 (compatible; GPTBot/1.0; +https://openai.com/gptbot)')); // true
+console.log(botdetect('Mozilla/5.0 (compatible; ClaudeBot/0.1; +https://www.anthropic.com/claude-bot)')); // true
+console.log(botdetect('Mozilla/5.0 (compatible; BardBot/1.0; +https://bard.google.com/bot)')); // true
+console.log(botdetect('Mozilla/5.0 (compatible; PerplexityBot/1.0; +https://www.perplexity.ai/bot)')); // true
+
+// All AI bots are categorized as 'ai'
+console.log(botCategory('Mozilla/5.0 (compatible; GPTBot/1.0; +https://openai.com/gptbot)')); // 'ai'
+```
+
 ## Browser Usage
 ```javascript
-import { botdetect } from 'browser-agent-detector';
+import { botdetect, botCategory } from 'browser-agent-detector';
 
 // In a React component
 useEffect(() => {
   const userAgent = navigator.userAgent;
   const isBot = botdetect(userAgent);
+  const botType = botCategory(userAgent);
   
   if (!isBot) {
     // Load heavy resources or analytics only for human users
     loadAnalytics();
+  } else if (botType === 'ai') {
+    // Special handling for AI bots
+    prepareAIFriendlyContent();
   }
 }, []);
 ```

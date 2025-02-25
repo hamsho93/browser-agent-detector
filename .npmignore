@@ -1,0 +1,10 @@
+src/
+test/
+coverage/
+.github/
+.vscode/
+.idea/
+.gitignore
+tsconfig.json
+jest.config.js
+*.log 

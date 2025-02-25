@@ -1,0 +1,40 @@
+{
+  "name": "botdetect",
+  "version": "1.0.0",
+  "description": "Detect bots, crawlers, and spiders by analyzing user agent strings",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "lint": "eslint src/**/*.ts",
+    "prepublishOnly": "npm run build",
+    "benchmark": "node benchmark/index.js"
+  },
+  "keywords": [
+    "bot",
+    "crawler",
+    "spider",
+    "detection",
+    "user-agent",
+    "isbot"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jest": "^29.5.0",
+    "@types/node": "^18.15.11",
+    "@typescript-eslint/eslint-plugin": "^5.57.1",
+    "@typescript-eslint/parser": "^5.57.1",
+    "eslint": "^8.37.0",
+    "jest": "^29.5.0",
+    "ts-jest": "^29.1.0",
+    "typescript": "^5.7.3"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
